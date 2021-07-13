@@ -35,7 +35,7 @@ if __name__ == '__main__':
     coarsen_features, coarsen_train_labels, coarsen_train_mask, coarsen_val_labels, coarsen_val_mask, coarsen_row, coarsen_col = load_data(
         g, candidate, C_list, Gc_list, dataset.num_classes)
 
-    coarsen_g = dgl.DGLGraph((coarsen_row, coarsen_col))
+    coarsen_g = dgl.graph((coarsen_row, coarsen_col))
 
     for e in range(args.epochs):
         model.train()
