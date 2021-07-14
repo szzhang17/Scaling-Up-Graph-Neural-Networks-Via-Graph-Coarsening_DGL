@@ -11,14 +11,15 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=200)
     parser.add_argument('--early_stopping', type=int, default=10)
     parser.add_argument('--lr', type=float, default=0.005)
-    parser.add_argument('--weight_decay', type=float, default=0.0005)
+    parser.add_argument('--weight_decay', type=float, default=5e-4)
     parser.add_argument('--normalize_features', type=bool, default=True)
     parser.add_argument('--coarsening_ratio', type=float, default=0.5)
     parser.add_argument('--coarsening_method', type=str, default='variation_neighborhoods')
     args = parser.parse_args()
 
-    dataset = dgl.data.CoraGraphDataset()
+    dataset = dgl.data.PubmedGraphDataset()
     g = dataset[0]
+
 
     model = GCN(g.ndata['feat'].shape[1], args.hidden, dataset.num_classes)
 
@@ -36,6 +37,11 @@ if __name__ == '__main__':
         g, candidate, C_list, Gc_list, dataset.num_classes)
 
     coarsen_g = dgl.graph((coarsen_row, coarsen_col))
+    g = dgl.remove_self_loop(g)
+    g = dgl.add_self_loop(g)
+    coarsen_g = dgl.remove_self_loop(coarsen_g)
+    coarsen_g = dgl.add_self_loop(coarsen_g)
+
 
     for e in range(args.epochs):
         model.train()
